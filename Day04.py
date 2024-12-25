@@ -51,6 +51,35 @@ class TwoDArray():
         self.grid = orig_grid
         return flipped_diag_strings
 
+    def get_a_subsets(self):
+        a_locs = []
+        a_subsets = []
+        for i in range(1, grid.grid.shape[0] - 1):
+            for j in range(1, grid.grid.shape[1] - 1):
+                if grid.grid[i][j] == "A":
+                    a_locs.append((i,j))
+        for a_loc in a_locs:
+            i = a_loc[0]
+            j = a_loc[1]
+            a_subsets.append(grid.grid[i-1:i+2, j-1:j+2])
+        return a_subsets
+
+    def count_xmas_crosses(self, subsets):
+        num_crosses = 0
+        for subset in subsets:
+            diagonal_1 = []
+            diagonal_1.append("".join(subset.diagonal()))
+            diagonal_1.append("".join(np.fliplr(np.flipud(subset)).diagonal()))
+
+            diagonal_2 = []
+            diagonal_2.append("".join(np.flipud(subset).diagonal()))
+            diagonal_2.append("".join(np.fliplr(subset).diagonal()))
+
+            if "MAS" in diagonal_1 and "MAS" in diagonal_2:
+                num_crosses += 1
+        return num_crosses
+
+
 def reverse_string(s):
     return s[::-1]
 
@@ -74,4 +103,8 @@ if __name__ == "__main__":
 
     print(f"Part 1 - Found {total_found} instances of 'XMAS'")
 
-
+    # Part 2 code here
+    grid = TwoDArray.load_from_file("Day04_Input.txt")
+    subsets = grid.get_a_subsets()
+    num_xmas = grid.count_xmas_crosses(subsets)
+    print(f"Part 2 - Found {num_xmas} XMAS")
